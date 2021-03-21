@@ -26,25 +26,26 @@ class ScriptedObject(physicalobject.PhysicalObject):
 
         self.stop_event = Event()
         self.script = None
+        self.locals_ = locals_
+        self.locals_['stop_event'] = self.stop_event
         if script:
             self.init_script(code, locals_)
 
-
-    def init_script(self, code=None, locals_={}):
+    def init_script(self, code=None):
         if self.script:
             self.stop_script()
 
         if code is None:
             code = self.code
 
-        if locals_ is None:
-            locals_ = {}
+        if not code or code.isspace():
+            return
 
         code = preamble + linter(code)
-        locals_['stop_event'] = self.stop_event
+
         self.script = Thread(
             target=exec,
-            args=(code, locals_),
+            args=(code, self.locals_),
             daemon=True
         )
         self.script.start()

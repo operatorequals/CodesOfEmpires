@@ -15,19 +15,16 @@ if arrived():
     stop_script()
 """
 
-#sprite = unit.Unit(img=pyglet.resource.image("assasin.png"),x=250)
-sprite = unit.Unit(img=pyglet.resource.image("knob.png"),x=250)
 
-movable_locals = {
-    "move" : sprite.move,
-    "stop" : sprite.stop,
-    "arrived" : sprite.arrived,
-    "stop_script" : sprite.stop_script
-}
- 
+main_batch = pyglet.graphics.Batch()
 
+sprite = unit.Unit(img=pyglet.resource.image("knob.png"),x=250, batch = main_batch)
+sprite2 = unit.Unit(img=pyglet.resource.image("knob.png"),x=250, batch = main_batch)
 
-sprite.init_script(ai, movable_locals)
+game_objects = [sprite, sprite2]
+
+sprite.init_script(ai)
+sprite2.init_script(ai)
 
 # Set up a window
 game_window = pyglet.window.Window(800, 600)
@@ -38,6 +35,7 @@ game_window = pyglet.window.Window(800, 600)
 def on_draw():
     game_window.clear()
 
+    main_batch.draw()
     sprite.draw()
     if sprite.target_sprite:
         sprite.target_sprite.draw()
@@ -46,6 +44,7 @@ def on_draw():
 
 def update(dt):
     sprite.update(dt)
+    sprite2.update(dt)
 
 
 
