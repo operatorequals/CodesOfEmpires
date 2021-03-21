@@ -7,12 +7,12 @@ pyglet.resource.path = ['.']
 pyglet.resource.reindex()
 
 ai = """
-while True:
-    x = random.randint(0,600)
-    y = random.randint(0,600)
-    move(x,y)
-    sleep(1)
-
+x = random.randint(0,600)
+y = random.randint(0,600)
+move(x,y)
+sleep(1)
+if arrived():
+    stop_script()
 """
 
 #sprite = unit.Unit(img=pyglet.resource.image("assasin.png"),x=250)
@@ -21,6 +21,8 @@ sprite = unit.Unit(img=pyglet.resource.image("knob.png"),x=250)
 movable_locals = {
     "move" : sprite.move,
     "stop" : sprite.stop,
+    "arrived" : sprite.arrived,
+    "stop_script" : sprite.stop_script
 }
  
 
