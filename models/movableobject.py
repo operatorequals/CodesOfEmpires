@@ -15,7 +15,7 @@ class MovableObject(physicalobject.PhysicalObject):
         )
 
         self.stop()
-        self.max_velocity = 180 # Pixel Per DT
+        self.max_velocity = 80 # Pixel Per DT
 
 
     def move(self, x, y):
@@ -58,6 +58,9 @@ class MovableObject(physicalobject.PhysicalObject):
         a = util.angle((1,0), (dx, dy))
         self.velocity_x = self.max_velocity * math.cos(a) 
         self.velocity_y = self.max_velocity * math.sin(a)
+
+        if dy != abs(dy): 
+            self.velocity_y *= -1 
 
 
     def delete(self):
