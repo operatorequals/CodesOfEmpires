@@ -2,6 +2,7 @@ import math
 import pyglet 
 
 from models.base import physicalobject
+from resources import load
 import util
 
 
@@ -11,7 +12,7 @@ class MovableObject(physicalobject.PhysicalObject):
         super(MovableObject, self).__init__(*args, **kwargs)
 
         self.target_sprite = physicalobject.PhysicalObject(
-            pyglet.resource.image("knob.png"), 
+            load.knob, 
             batch=self.batch
         )
 

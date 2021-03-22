@@ -19,9 +19,8 @@ class Unit(scriptedobject.ScriptedObject, movableobject.MovableObject):
             **kwargs)
 
         self.team = team
-        self.visibility_radius = 400
+        self.visibility_radius = 100
         self.explored_objects = []
-        self.last_explored = None
 
         self.locals_['team'] = team # huge security issue 
         self.locals_['last_explored'] = self.last_explored
@@ -40,7 +39,6 @@ class Unit(scriptedobject.ScriptedObject, movableobject.MovableObject):
             if game_object not in self.explored_objects:
                 self.explored_objects.append(game_object)
             return True
-
         return False
 
 

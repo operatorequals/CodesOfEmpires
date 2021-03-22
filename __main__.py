@@ -1,37 +1,44 @@
 import pyglet
 
-from models.units import unit
-from models.resources import resource
-#
-# Tell pyglet where to find the resources
-pyglet.resource.path = ['./resources']
-pyglet.resource.reindex()
+from models.units import unit, workerunit
+from models.resources import resource, wood, food, iron
+
+from resources import load
+
 
 ai = """
 x = random.randint(0,600)
 y = random.randint(0,600)
 move(x,y)
-while not last_explored:
-    sleep(0.5)
+while not arrived():
+    sleep(1)
 
-work(last_explored)
+if not explored:
+    continue
+
+a = last_explored()
+move(a.x,a.y)
+
+while not arrived():
+    sleep(1)
 """
 
 
 main_batch = pyglet.graphics.Batch()
 
-sprite = unit.Unit(img=pyglet.resource.image("knob.png"),x=250, batch = main_batch)
-sprite2 = unit.Unit(img=pyglet.resource.image("knob.png"),x=250, batch = main_batch)
+sprite = workerunit.WorkerUnit(img=load.worker, x=250, batch = main_batch)
+#sprite2 = workerunit.WorkerUnit(img=pyglet.resource.image("knob.png"),x=250, batch = main_batch)
 
-wood = resource.Resource(img=pyglet.resource.image("knob.png"), wood=1000, batch=main_batch, x= 400, y=400)
-
-game_objects = [sprite, sprite2, wood]
+wood_spr = wood.Wood(wood=1000, batch=main_batch, x= 400, y=400)
+iron_spr = iron.Iron(iron=1000, batch=main_batch, x= 600, y=600)
+food_spr = food.Food(food=1000, batch=main_batch, x= 200, y=200)
+#game_objects = [sprite, sprite2]
+game_objects = [sprite, wood_spr, food_spr]
 
 sprite.init_script(ai)
-sprite2.init_script(ai)
-
+#sprite2.init_script(ai)
 # Set up a window
-game_window = pyglet.window.Window(800, 600)
+game_window = pyglet.window.Window(1024, 720)
 
 
 
@@ -43,9 +50,17 @@ def on_draw():
 
 
 def update(dt):
-
-    for obj in game_objects:
+    
+    for i in range(len(game_objects)):
+        obj = game_objects[i]
         obj.update(dt)
+        
+        for j in range(i+1, len(game_objects)):
+            obj2 = game_objects[j]
+            if 'Unit' in str(obj):
+                obj.in_visible_range(obj2)
+            if 'Unit' in str(obj2):
+                obj2.in_visible_range(obj)
 
 
 if __name__ == "__main__":
@@ -55,3 +70,4 @@ if __name__ == "__main__":
 
     # Tell pyglet to do its thing
     pyglet.app.run()
+

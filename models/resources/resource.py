@@ -43,6 +43,7 @@ class Resource(pyglet.sprite.Sprite):
         for r in self.__generate:
             self.__capacity[r] += self.__generate[r]
 
+
     def _collect(self, value, type):
         if self.__capacity[type] >= value:
             self.__capacity[type] -= value
@@ -50,3 +51,4 @@ class Resource(pyglet.sprite.Sprite):
             self.__capacity[type] = 0
 
         return value
+
