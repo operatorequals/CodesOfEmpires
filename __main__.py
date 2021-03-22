@@ -1,6 +1,6 @@
 import pyglet
 
-from models import unit
+from models.units import unit
 #
 # Tell pyglet where to find the resources
 pyglet.resource.path = ['.']

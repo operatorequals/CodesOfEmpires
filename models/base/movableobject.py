@@ -1,7 +1,7 @@
 import math
 import pyglet 
 
-from models import physicalobject
+from models.base import physicalobject
 import util
 
 
@@ -34,12 +34,13 @@ class MovableObject(physicalobject.PhysicalObject):
         self.velocity_y = 0
 
 
-    def arrived(self):
+    def arrived(self, where=None):
+        if where is None:
+            where = self.target
         if not self.target:
-            self.target_sprite.visible = False
             return True
 
-        d = util.distance((self.x, self.y), self.target)
+        d = util.distance((self.x, self.y), where)
         if d < 10:  # Close enough to target
             self.stop()
             return True
@@ -51,7 +52,9 @@ class MovableObject(physicalobject.PhysicalObject):
         super().update(dt)
         self.target_sprite.update(dt)
 
-        if self.arrived(): return
+        if self.arrived():
+            self.target_sprite.visible = False
+            return
 
         dx = self.target[0] - self.x
         dy = self.target[1] - self.y

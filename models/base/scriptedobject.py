@@ -1,7 +1,7 @@
 import pyglet
 from threading import Thread, Event
 
-from models import physicalobject
+from models.base import physicalobject
 
 # Code that runs in the beginning of every script
 preamble = """
