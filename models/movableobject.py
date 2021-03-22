@@ -12,10 +12,11 @@ class MovableObject(physicalobject.PhysicalObject):
 
         self.target_sprite = physicalobject.PhysicalObject(
             pyglet.resource.image("knob.png"), 
+            batch=self.batch
         )
 
         self.stop()
-        self.max_velocity = 80 # Pixel Per DT
+        self.max_velocity = 180 # Pixel Per DT
 
 
     def move(self, x, y):
@@ -66,4 +67,5 @@ class MovableObject(physicalobject.PhysicalObject):
     def delete(self):
         self.target_sprite.delete()
         super().delete()
+
 

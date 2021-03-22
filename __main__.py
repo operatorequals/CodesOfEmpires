@@ -36,16 +36,12 @@ def on_draw():
     game_window.clear()
 
     main_batch.draw()
-    sprite.draw()
-    if sprite.target_sprite:
-        sprite.target_sprite.draw()
-
 
 
 def update(dt):
-    sprite.update(dt)
-    sprite2.update(dt)
 
+    for obj in game_objects:
+        obj.update(dt)
 
 
 if __name__ == "__main__":
