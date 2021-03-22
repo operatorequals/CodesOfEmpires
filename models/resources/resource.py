@@ -9,16 +9,17 @@ class Type(Enum):
 
 class Resource(pyglet.sprite.Sprite):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args,
+    def __init__(self, *args,
                 food=0,
                 wood=0,
                 iron=0,
                 food_gen=0.0, # N per DT
                 wood_gen=0.0,
                 iron_gen=0.0,
-                destroy_empty=True
-                **kwargs)
+                destroy_empty=True,
+                 **kwargs):
+
+        super().__init__(*args, **kwargs)
 
         self.__capacity = {
             "food" : food,

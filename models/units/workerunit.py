@@ -3,7 +3,7 @@ from models.units import unit
 
 class WorkerUnit(unit.Unit):
     def __init__(self, *args, **kwargs):
-        super(Unit, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.work_object = None
         self.work_rate = 0.1
@@ -27,6 +27,7 @@ class WorkerUnit(unit.Unit):
 
 
     def update(self, td):
+        super().update(td)
         if not self.work_object:
             return
 
