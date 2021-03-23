@@ -14,6 +14,12 @@ def center_image(image):
 knob=pyglet.resource.image("knob.png")
 center_image(knob)
 
+worker=pyglet.resource.image("worker.png")
+worker.width  = 42
+worker.height = 42
+center_image(worker)
+
+
 wood=pyglet.resource.image("wood.png")
 wood.width  = 32
 wood.height = 32
@@ -29,11 +35,4 @@ iron.width  = 32
 iron.height = 32
 center_image(iron)
 
-
-
-worker=pyglet.resource.image("knob.png")
-#worker=pyglet.resource.animation("worker1.gif")
-worker.width /= 2
-worker.height /= 2
-center_image(worker)
 

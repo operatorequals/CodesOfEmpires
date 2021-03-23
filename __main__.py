@@ -26,14 +26,13 @@ while not arrived():
 
 main_batch = pyglet.graphics.Batch()
 
-sprite = workerunit.WorkerUnit(img=load.worker, x=250, batch = main_batch)
-#sprite2 = workerunit.WorkerUnit(img=pyglet.resource.image("knob.png"),x=250, batch = main_batch)
+sprite = workerunit.WorkerUnit(x=250, batch = main_batch)
 
 wood_spr = wood.Wood(wood=1000, batch=main_batch, x= 400, y=400)
 iron_spr = iron.Iron(iron=1000, batch=main_batch, x= 600, y=600)
 food_spr = food.Food(food=1000, batch=main_batch, x= 200, y=200)
 #game_objects = [sprite, sprite2]
-game_objects = [sprite, wood_spr, food_spr]
+game_objects = [sprite, wood_spr, food_spr, iron_spr]
 
 sprite.init_script(ai)
 #sprite2.init_script(ai)

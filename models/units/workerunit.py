@@ -1,9 +1,10 @@
 from models.units import unit
 
+from resources import load
 
 class WorkerUnit(unit.Unit):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *args, img=load.worker, **kwargs):
+        super().__init__(*args, img=img, **kwargs)
 
         self.work_object = None
         self.work_rate = 0.1
