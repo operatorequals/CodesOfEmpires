@@ -1,5 +1,6 @@
 import pyglet
 
+from models.base import gameobject
 from enum import Enum
 
 class Type(Enum):
@@ -7,7 +8,7 @@ class Type(Enum):
     FOOD='food'
     IRON='iron'
 
-class Resource(pyglet.sprite.Sprite):
+class Resource(pyglet.sprite.Sprite, gameobject.GameObject ):
 
     def __init__(self, *args,
                 food=0,
@@ -18,8 +19,8 @@ class Resource(pyglet.sprite.Sprite):
                 iron_gen=0.0,
                 destroy_empty=True,
                  **kwargs):
-
         super().__init__(*args, **kwargs)
+        gameobject.GameObject.__init__(self, *args, **kwargs)
 
         self.__capacity = {
             "food" : food,

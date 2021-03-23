@@ -1,13 +1,15 @@
 
-from models.base import scriptedobject
 from models.base import movableobject
+from models.base import scriptedobject
+
+from models.base import gameobject
 
 from mechanics.team import Team, Gaia
 
 import util
 
 
-class Unit(scriptedobject.ScriptedObject, movableobject.MovableObject):
+class Unit(scriptedobject.ScriptedObject, movableobject.MovableObject, gameobject.GameObject):
     def __init__(self, *args, team=Gaia, **kwargs):
         super(Unit, self).__init__(*args,
             locals_= {
@@ -21,6 +23,7 @@ class Unit(scriptedobject.ScriptedObject, movableobject.MovableObject):
         self.team = team
         self.visibility_radius = 100
         self.explored_objects = []
+        gameobject.GameObject.__init__(self, *args, **kwargs)
 
         self.locals_['team'] = team # huge security issue 
         self.locals_['last_explored'] = self.last_explored
