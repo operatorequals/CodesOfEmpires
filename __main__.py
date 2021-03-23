@@ -2,7 +2,6 @@ import pyglet
 
 from models.units import unit, workerunit
 from models.resources import resource, wood, food, iron
-
 from resources import load
 
 
@@ -17,7 +16,8 @@ if not explored:
     continue
 
 a = last_explored()
-move(a.x,a.y)
+if a.isWood:
+    move(a.x,a.y)
 
 while not arrived():
     sleep(1)
@@ -27,6 +27,7 @@ while not arrived():
 main_batch = pyglet.graphics.Batch()
 
 sprite = workerunit.WorkerUnit(x=250, batch = main_batch)
+sprite.locals_['isWood'] = models.isWood
 
 wood_spr = wood.Wood(wood=1000, batch=main_batch, x= 400, y=400)
 iron_spr = iron.Iron(iron=1000, batch=main_batch, x= 600, y=600)
