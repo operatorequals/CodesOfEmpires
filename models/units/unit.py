@@ -19,21 +19,20 @@ class Unit(scriptedobject.ScriptedObject, movableobject.MovableObject, gameobjec
                 "stop_script" : self.stop_script,
            },
             **kwargs)
+        gameobject.GameObject.__init__(self, *args, **kwargs)
 
         self.team = team
-        self.visibility_radius = 100
+        self.visibility_radius = 180
         self.explored_objects = []
-        gameobject.GameObject.__init__(self, *args, **kwargs)
 
         self.locals_['team'] = team # huge security issue 
         self.locals_['last_explored'] = self.last_explored
         self.locals_['explored'] = self.explored_objects
  
 
-#    def update(self, dt):
-#        pass
-
     def in_visible_range(self, game_object):
+        if game_object.dead:
+            return False
         d = util.distance(
             (self.x, self.y),
             (game_object.x, game_object.y)
@@ -49,4 +48,15 @@ class Unit(scriptedobject.ScriptedObject, movableobject.MovableObject, gameobjec
         if not self.explored_objects:
             return None
         return self.explored_objects[-1]
+
+
+    def update(self, td):
+        super().update(td)
+        dead_objects = []
+        for gm in self.explored_objects:
+            if gm.dead:
+                dead_objects.append(gm)
+
+        for gm in dead_objects:
+            self.explored_objects.remove(gm)
 

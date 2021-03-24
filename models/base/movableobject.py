@@ -17,7 +17,7 @@ class MovableObject(physicalobject.PhysicalObject):
         )
 
         self.stop()
-        self.max_velocity = 180 # Pixel Per DT
+        self.max_velocity = 250 # Pixel Per DT
 
 
     def move(self, x, y):
@@ -43,7 +43,6 @@ class MovableObject(physicalobject.PhysicalObject):
 
         d = util.distance((self.x, self.y), where)
         if d < 10:  # Close enough to target
-            self.stop()
             return True
 
         return False
@@ -54,6 +53,7 @@ class MovableObject(physicalobject.PhysicalObject):
         self.target_sprite.update(dt)
 
         if self.arrived():
+            self.stop()
             self.target_sprite.visible = False
             return
 

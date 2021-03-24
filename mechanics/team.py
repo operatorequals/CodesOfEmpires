@@ -9,8 +9,9 @@ class Team:
             "iron" : 0
         }
 
-    def _stockpile(value, type):
-        self.__capacity[type] += value
+    def _stockpile(self, value, type_):
+        print("Stockpiling",self.__capacity[type_] )
+        self.__capacity[type_] += value
 
 Gaia = Team()
 

@@ -19,6 +19,8 @@ class GameObject:
                     (lambda x : self.__check(x))(type_)
                 )
             
+        self.dead = False
+
 
     def __check(self, class_str):
         if class_str not in GameObjectTypes:

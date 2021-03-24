@@ -38,7 +38,8 @@ class Resource(pyglet.sprite.Sprite, gameobject.GameObject ):
 
     def update(self, dt):
         if not sum(self.__capacity.values()) and self.__destroy_empty:
-            self.delete()
+            self.visible = False
+            self.dead = True
             return
 
         for r in self.__generate:
@@ -46,10 +47,13 @@ class Resource(pyglet.sprite.Sprite, gameobject.GameObject ):
 
 
     def _collect(self, value, type):
+        if self.__capacity[type] == 0:
+            return 0    
         if self.__capacity[type] >= value:
             self.__capacity[type] -= value
+            return value
         else:
+            ret = self.__capacity[type]
             self.__capacity[type] = 0
-
-        return value
+            return ret
 
