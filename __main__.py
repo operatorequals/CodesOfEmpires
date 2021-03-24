@@ -16,21 +16,29 @@ if not explored:
     continue
 
 a = last_explored()
+print(a.isWood, a.isFood, a.isIron)
 if a.isWood:
-    move(a.x,a.y)
+    timber(a)
+    print('Timpering')
+    while not finished():
+        sleep(0.5)
+    print('timbered')
 
-while not arrived():
-    sleep(1)
+elif a.isFood:
+    collect(a)
+    print('Collecting')
+    while not finished():
+        sleep(0.5)
+    print('collected')
 """
 
 
 main_batch = pyglet.graphics.Batch()
 
 sprite = workerunit.WorkerUnit(x=250, batch = main_batch)
-sprite.locals_['isWood'] = models.isWood
 
 wood_spr = wood.Wood(wood=1000, batch=main_batch, x= 400, y=400)
-iron_spr = iron.Iron(iron=1000, batch=main_batch, x= 600, y=600)
+iron_spr = iron.Iron(iron=1000, batch=main_batch, x= 300, y=300)
 food_spr = food.Food(food=1000, batch=main_batch, x= 200, y=200)
 #game_objects = [sprite, sprite2]
 game_objects = [sprite, wood_spr, food_spr, iron_spr]
