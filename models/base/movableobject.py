@@ -25,7 +25,9 @@ class MovableObject(physicalobject.PhysicalObject):
         self.target_sprite.x = x
         self.target_sprite.y = y
         self.target_sprite.visible = True
-
+        x = util.distance((self.x, self.y), (x,y))
+        # Returns an ETA as double
+        return x/self.max_velocity
 
     def stop(self):
         self.target = None
@@ -38,11 +40,11 @@ class MovableObject(physicalobject.PhysicalObject):
     def arrived(self, where=None):
         if where is None:
             where = self.target
-        if not self.target:
+        if not where:
             return True
 
         d = util.distance((self.x, self.y), where)
-        if d < 10:  # Close enough to target
+        if d <= 10:  # Close enough to target
             return True
 
         return False
@@ -71,5 +73,4 @@ class MovableObject(physicalobject.PhysicalObject):
     def delete(self):
         self.target_sprite.delete()
         super().delete()
-
 

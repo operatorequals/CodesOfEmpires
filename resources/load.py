@@ -1,7 +1,10 @@
 import pyglet
 
+import os
+
 # Tell pyglet where to find the resources
-pyglet.resource.path = ['./resources']
+
+pyglet.resource.path = [os.path.dirname(os.path.realpath(__file__))]
 pyglet.resource.reindex()
 
 

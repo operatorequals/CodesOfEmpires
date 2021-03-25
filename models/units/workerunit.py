@@ -6,8 +6,9 @@ class WorkerUnit(unit.Unit):
     def __init__(self, *args, img=load.worker, **kwargs):
         super().__init__(*args, img=img, **kwargs)
 
+        self.__working = False
         self.work_object = None
-        self.work_rate = 1
+        self.work_rate = 0.1
         self.locals_['extract'] = self.extract
         self.locals_['collect'] = self.collect
         self.locals_['timber'] = self.timber
@@ -28,8 +29,10 @@ class WorkerUnit(unit.Unit):
         self.work_type = work_type
 
 
-    def _stop(self):
+    def stop_work(self):
         self.work_object = None
+        self.__working = True
+        self.work_type = None
 
 
     def finished(self):
@@ -40,12 +43,20 @@ class WorkerUnit(unit.Unit):
         super().update(td)
         if not self.work_object:
             return
-        if not self.arrived((self.work_object.x, self.work_object.y)):
+
+        if not self.arrived(
+                    (self.work_object.x, self.work_object.y)
+                ):
+            print(f"Stopped working as it is away - {self.__working}")
+            if self.__working:
+                self.stop_work()
             return
 
+#        print(self.x, self.y, "->", self.work_object.x, self.work_object.y)
         r = self.work_object._collect(self.work_rate, self.work_type)
+        self.__working = True
         if r <= 0:
-            self.work_object = None
+            self.stop_work()
             return
         self.team._stockpile(r, self.work_type)
 

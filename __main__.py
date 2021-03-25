@@ -5,49 +5,25 @@ from models.resources import resource, wood, food, iron
 from resources import load
 
 
-ai = """
-x = random.randint(0,600)
-y = random.randint(0,600)
-move(x,y)
-while not arrived():
-    sleep(1)
-
-if not explored:
-    continue
-
-a = last_explored()
-print(a.isWood, a.isFood, a.isIron)
-if a.isWood:
-    timber(a)
-    print('Timpering')
-    while not finished():
-        sleep(0.5)
-    print('timbered')
-
-elif a.isFood:
-    collect(a)
-    print('Collecting')
-    while not finished():
-        sleep(0.5)
-    print('collected')
-"""
-
-
+ai = open('ai.py').read()
 main_batch = pyglet.graphics.Batch()
 
-sprite = workerunit.WorkerUnit(x=250, batch = main_batch)
+sprite = workerunit.WorkerUnit(x=250, y=000, batch = main_batch)
+#sprite2 = workerunit.WorkerUnit(y=250, batch = main_batch)
 
 wood_spr = wood.Wood(wood=1000, batch=main_batch, x= 400, y=400)
-iron_spr = iron.Iron(iron=1000, batch=main_batch, x= 300, y=300)
-food_spr = food.Food(food=1000, batch=main_batch, x= 200, y=200)
+#iron_spr = iron.Iron(iron=1000, batch=main_batch, x= 300, y=300)
+#food_spr = food.Food(food=1000, batch=main_batch, x= 200, y=200)
 #game_objects = [sprite, sprite2]
-game_objects = [sprite, wood_spr, food_spr, iron_spr]
+game_objects = [sprite, wood_spr, 
+               # food_spr, iron_spr
+               ]
 
 sprite.init_script(ai)
 #sprite2.init_script(ai)
 # Set up a window
-game_window = pyglet.window.Window(1024, 720)
-
+game_window = pyglet.window.Window(800, 600)
+game_window.set_location(1120,200)
 
 
 @game_window.event

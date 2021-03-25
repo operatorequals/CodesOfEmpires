@@ -1,12 +1,13 @@
 import pyglet
 
+import util
 from models.base import gameobject
-from enum import Enum
 
-class Type(Enum):
-    WOOD='wood'
-    FOOD='food'
-    IRON='iron'
+ResourceTypes = [
+    "Wood",
+    "Food",
+    "Iron"
+]
 
 class Resource(pyglet.sprite.Sprite, gameobject.GameObject ):
 
@@ -46,6 +47,7 @@ class Resource(pyglet.sprite.Sprite, gameobject.GameObject ):
             self.__capacity[r] += self.__generate[r]
 
 
+    @util.synchronized
     def _collect(self, value, type):
         if self.__capacity[type] == 0:
             return 0    

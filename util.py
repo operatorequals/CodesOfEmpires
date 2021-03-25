@@ -1,4 +1,6 @@
 
+import threading
+import functools
 import math
 
 
@@ -17,3 +19,13 @@ def length(v):
 def angle(v1, v2):
   return math.acos(dotproduct(v1, v2) / (length(v1) * length(v2)))
 
+# Python thread safety:
+#  https://stackoverflow.com/a/29163532
+def synchronized(wrapped):
+    lock = threading.Lock()
+    @functools.wraps(wrapped)
+    def _wrap(*args, **kwargs):
+#        print "Calling '%s' with Lock %s" % (wrapped.__name__, id(lock))
+        with lock:
+            return wrapped(*args, **kwargs)
+    return _wrap
