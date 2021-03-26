@@ -8,6 +8,7 @@ WINDOW.set_location(1120,200)
 WINDOW.set_visible(True)
 
 BATCH = pyglet.graphics.Batch()
+#TEXT_BATCH = pyglet.graphics.Batch()
 
 GAME_OBJECTS = []
 APP = pyglet.app
@@ -25,6 +26,7 @@ def refresh():
 def on_draw():
     WINDOW.clear()
     BATCH.draw()
+#    TEXT_BATCH.draw()
 
 
 def update(dt):
@@ -44,18 +46,29 @@ def update(dt):
 
 pyglet.clock.schedule_interval(update, 1 / 120.0)
 
+ 
 # ==================================================
 
 class GameTest(unittest.TestCase):
 
+    label_pos = [10, 550]
     def setUp(self):
         WINDOW.set_caption(self._testMethodName)
+        '''
+        self.label = pyglet.text.Label(self._testMethodName,
+                                 x = GameTest.label_pos[0],
+                                 y = GameTest.label_pos[1],
+                                 batch=TEXT_BATCH
+                                )
+        GameTest.label_pos[1] -= 15
+        '''
         self.thr = Thread(target=APP.run, daemon=False)
         self.thr.start()
 
     def tearDown(self):
-        #for obj in GAME_OBJECTS:
-        #    obj.delete()
+        #self.label.text = self.label.text + self._outcome
+#        for obj in GAME_OBJECTS:
+#            obj.delete()
         #refresh()
         APP.exit()
         self.thr.join()
