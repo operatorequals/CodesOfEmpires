@@ -28,8 +28,18 @@ def on_draw():
 
 
 def update(dt):
-    for obj in GAME_OBJECTS:
+    
+    for i in range(len(GAME_OBJECTS)):
+        obj = GAME_OBJECTS[i]
         obj.update(dt)
+        
+        for j in range(i+1, len(GAME_OBJECTS)):
+            obj2 = GAME_OBJECTS[j]
+            if 'Unit' in str(obj):
+                obj.in_visible_range(obj2)
+            if 'Unit' in str(obj2):
+                obj2.in_visible_range(obj)
+
 
 
 pyglet.clock.schedule_interval(update, 1 / 120.0)
@@ -40,7 +50,6 @@ class GameTest(unittest.TestCase):
 
     def setUp(self):
         WINDOW.set_caption(self._testMethodName)
-        GAME_OBJECTS.append(self.unit)
         self.thr = Thread(target=APP.run, daemon=False)
         self.thr.start()
 

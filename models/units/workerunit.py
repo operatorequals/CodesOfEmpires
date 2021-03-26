@@ -24,6 +24,7 @@ class WorkerUnit(unit.Unit):
 
 
     def work(self, work_object, work_type):
+        self.stop()
         self.work_object = work_object
         self.move(work_object.x, work_object.y)
         self.work_type = work_type
@@ -47,7 +48,7 @@ class WorkerUnit(unit.Unit):
         if not self.arrived(
                     (self.work_object.x, self.work_object.y)
                 ):
-            print(f"Stopped working as it is away - {self.__working}")
+#            print(f"Stopped working as it is away - {self.__working}")
             if self.__working:
                 self.stop_work()
             return

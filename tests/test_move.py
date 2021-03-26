@@ -1,6 +1,3 @@
-import unittest
-
-from threading import Thread
 from time import sleep
 from random import randint
 
@@ -28,7 +25,7 @@ class Movement(tests.GameTest):
             batch = BATCH
         )
         super().setUp()
-
+        GAME_OBJECTS.append(self.unit)
 
     def test_move(self):
         point = (500,500)
