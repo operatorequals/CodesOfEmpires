@@ -73,7 +73,7 @@ eta = move({point1[0]}, {point1[1]})
 sleep(eta)
         '''
         self.unit.init_script(ai)
-        sleep(max_t)
+        sleep(max_t+0.2)
         self.assertTrue(
             self.unit.arrived()
         )
