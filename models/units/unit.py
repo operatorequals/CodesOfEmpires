@@ -4,13 +4,12 @@ from models.base import scriptedobject
 
 from models.base import gameobject
 
-from mechanics.team import Team, Gaia
 
 import util
 
 
 class Unit(scriptedobject.ScriptedObject, movableobject.MovableObject, gameobject.GameObject):
-    def __init__(self, *args, team=Gaia, **kwargs):
+    def __init__(self, *args, team=None, **kwargs):
         super(Unit, self).__init__(*args,
             locals_= {
                 "move" : self.move,
@@ -59,4 +58,6 @@ class Unit(scriptedobject.ScriptedObject, movableobject.MovableObject, gameobjec
 
         for gm in dead_objects:
             self.explored_objects.remove(gm)
+
+
 

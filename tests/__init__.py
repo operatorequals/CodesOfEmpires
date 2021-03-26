@@ -9,7 +9,8 @@ WINDOW.set_visible(True)
 
 BATCH = pyglet.graphics.Batch()
 TEXT_BATCH = pyglet.graphics.Batch()
-
+#print(dir(WINDOW))
+#print(WINDOW._x_ic)
 GAME_OBJECTS = []
 APP = pyglet.app
 

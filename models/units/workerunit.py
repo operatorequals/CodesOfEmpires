@@ -13,7 +13,7 @@ class WorkerUnit(unit.Unit):
         self.locals_['collect'] = self.collect
         self.locals_['timber'] = self.timber
         self.locals_['finished'] = self.finished
-
+        self.locals_['stop_work'] = self.stop_work
 
     def timber(self, work_object):
         self.work(work_object, 'wood')
