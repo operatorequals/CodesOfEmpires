@@ -21,6 +21,7 @@ escape_words = [
     "__attr__",
     "__",
     "open",
+    "locals","globals",
 ]
 
 def security_check(code):
@@ -30,16 +31,21 @@ def security_check(code):
                 f"'{word}' is not allowed in the objects script"
             )
         
-def linter(code):
-    ret = ''
+def linter(code, definitions='', constants=''):
+    indented_code = ''
     for i in code.splitlines():
-        ret += '    ' + i + '\n'
-    security_check(ret)
-    return ret
+        indented_code += '    ' + i + '\n'
+    payload = f'''
+{constants}
+{definitions}
+{indented_code}
+    '''
+    security_check(payload)
+    return preamble + payload
 
 
 class ScriptedObject(physicalobject.PhysicalObject):
-    def __init__(self, *args, script=None, locals_={}, **kwargs):
+    def __init__(self, *args, code=None, locals_={}, definitions='', constants='', **kwargs):
         super(ScriptedObject, self).__init__(*args, **kwargs)
 
         self.stop_event = Event()
@@ -47,22 +53,18 @@ class ScriptedObject(physicalobject.PhysicalObject):
         self.running = False
         self.locals_ = locals_
         self.locals_['stop_event'] = self.stop_event
-        if script:
-            self.init_script(code, locals_)
-            self.running = True
+        if code:
+            self.init_script(code)
 
 
-    def init_script(self, code=None):
+    def init_script(self, code=None, definitions='', constants=''):
         if self.running:
             self.stop_script()
-
-        if code is None:
-            code = self.code
 
         if not code or code.isspace():
             return
 
-        code = preamble + linter(code)
+        code = linter(code)
         self.stop_event.clear()
         self.script = Thread(
             target=exec,

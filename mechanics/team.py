@@ -31,6 +31,9 @@ class Team:
                         batch=None,
                         # max population
                         population=30,
+                        code=None,
+                        definitions='',
+                        constants='',
                 ):
         self.__capacity = {}
         for type_ in ResourceTypes:
@@ -46,21 +49,31 @@ class Team:
             raise IllegalArgumentException(
                 "The initial 'units' of the team exceed the max population"
             )
+        self.init_script(code, definitions, constants)
         # Create the default units
         for k,v in units.items():
             for i in range(v):
                 self.__create(k)
 
 
-    def init_script(self, script):
+    def init_script(self, code, definitions='', constants=''):
+        self.code = code
+        self.definitions = definitions
+        self.constants = constants
+
         for unit in self.members:
-            unit.init_script(script)
+            unit.init_script(code,
+                             definitions = definitions,
+                             constants   = constants,
+                            )
 
 
+    @util.synchronized
     def __len__(self):
         return len(self.members)
 
 
+    @util.synchronized
     def empty(self):
         return 0 == len(self.members)
 
@@ -100,10 +113,14 @@ class Team:
         unit = create_unit(type_,
                            batch=self.batch,
                            team=self,
-                          )
+                         )
         self.__init_unit(unit)
         self.members.add(unit)
  
+        unit.init_script(self.code,
+                         self.definitions,
+                         self.constants)
+
 
     def reached_population(self):
         if len(self) >= self.max_population:
@@ -132,6 +149,7 @@ class Team:
             unit.update(td)
             if unit.dead:
                 delete_unit(unit)
+
 
     def delete(self):
         for obj in self.members:
