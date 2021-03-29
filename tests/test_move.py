@@ -1,11 +1,12 @@
 from time import sleep
 from random import randint
 
+from models.units import TO_ADD, TO_REMOVE, delete_unit
 from models.units import unit
 from resources import load
 
 import tests
-from tests import GAME_OBJECTS, APP, BATCH, WINDOW, refresh
+from mechanics.game import APP, BATCH, WINDOW
 import util
 
 point0 = (0,0)
@@ -24,8 +25,14 @@ class Movement(tests.GameTest):
             x=250, y=0,
             batch = BATCH
         )
+        TO_ADD.put(self.unit)
         super().setUp()
-        GAME_OBJECTS.append(self.unit)
+
+
+    def tearDown(self):
+        super().tearDown()
+        delete_unit(self.unit)
+
 
     def test_move(self):
         point = (500,500)
@@ -77,4 +84,22 @@ sleep(eta)
         self.assertTrue(
             self.unit.arrived()
         )
+
+
+    def test_consecutive_move(self):
+        ai = '''
+eta=move(200,100)
+sleep(eta)
+eta=move(500,200)
+sleep(eta)
+eta=move(100,600)
+sleep(eta)
+stop_script()
+'''
+        self.unit.init_script(ai)
+        self.unit.script.join()
+        self.assertTrue(
+            self.unit.arrived()
+        )
+
 

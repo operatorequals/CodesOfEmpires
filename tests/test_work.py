@@ -6,7 +6,8 @@ from models.resources import resource, wood, food, iron
 from mechanics import team
 
 import tests
-from tests import GAME_OBJECTS, APP, BATCH, WINDOW, refresh
+from models.units import TO_ADD, TO_REMOVE
+from mechanics.game import BATCH, WINDOW
 import util
 
 point0 = (0,0)
@@ -19,23 +20,29 @@ max_t = x/v
 class Work(tests.GameTest):
 
     def setUp(self):
-        global GAME_OBJECTS
-        # Initializing in 50px area to be all in 'explored'
-        self.unit = workerunit.WorkerUnit(
-            x=250, y=250,
-            batch = BATCH,
-            team = team.Team()
-        )
+        self.team = team.Team(units={'worker':1}, batch=BATCH)
+        # Hack to retrive the first element of a set:
+        # https://stackoverflow.com/a/59841
+        for self.unit in self.team.members: break
+        self.unit.x = 200
+        self.unit.y = 200
+
+        # Initializing in 50px area around unit to be all in 'explored'
         self.wood = wood.Wood(wood=50, batch=BATCH, x= 200, y=300)
         self.iron = iron.Iron(iron=50, batch=BATCH, x= 300, y=200)
         self.food = food.Food(food=50, batch=BATCH, x= 300, y=300)
-        GAME_OBJECTS.extend( [
-            self.unit,
-            self.wood,
-            self.iron,
-            self.food
-        ])
+        TO_ADD.put(self.wood, block=False)
+        TO_ADD.put(self.iron, block=False)
+        TO_ADD.put(self.food, block=False)
+        
         super().setUp()
+
+    def tearDown(self):
+        self.team.delete()
+        TO_REMOVE.put(self.wood, block=True)
+        TO_REMOVE.put(self.iron, block=True)
+        TO_REMOVE.put(self.food, block=True)
+        super().tearDown()
 
 
     def test_timber(self):
@@ -44,12 +51,13 @@ sleep(0.2)
 for e in explored:
     if e.isWood:
         timber(e)
-        while team.WOOD < 20:
+        while WOOD() < 20:
             sleep(0.1)
 stop_script()
         '''
         self.unit.init_script(ai)
-        sleep(2.5)
+        self.unit.script.join()
+       # sleep(2.5)
         self.assertTrue(
             25 >= self.unit.team.WOOD >= 20 
         )
@@ -60,7 +68,7 @@ sleep(0.2)
 for e in explored:
     if e.isIron:
         extract(e)
-        while team.IRON < 20:
+        while IRON() < 20:
             sleep(0.1)
 stop_script()
         '''
@@ -76,7 +84,7 @@ sleep(0.2)
 for e in explored:
     if e.isFood:
         collect(e)
-        while team.FOOD < 20:
+        while FOOD() < 20:
             sleep(0.1)
 stop_script()
         '''
@@ -95,20 +103,21 @@ sleep(0.2)
 eta=move(400,400)
 while not explored:
     sleep(0.2)
+
 for e in explored:
     if e.isIron:
+        stop()
         extract(e)
-        while team.IRON < 12:
-            sleep(0.1)
-        break
-eta=move(400,400)
-sleep(eta)
-stop_script()
+        while IRON() < 12:
+            sleep(0.5)
+        eta=move(400,400)
+        sleep(eta)
+        stop_script()
         '''
         self.unit.init_script(ai)
-        sleep(4)
+        sleep(5)
         self.assertTrue(
-            20 >= self.unit.team.IRON >= 12
+            20 >= self.team.IRON >= 12
         )
 
 
@@ -118,22 +127,24 @@ sleep(0.2)
 for e in explored:
     if e.isFood:
         collect(e)
-        sleep(1)
-    move(400,400)
+        sleep(2.5)
+        eta=move(400,400)
+        sleep(eta)
+    sleep(0.1)
 stop_script()
         '''
         self.unit.init_script(ai)
-        sleep(2.5)
+        self.unit.script.join()#       sleep(2.5)
         self.assertTrue(
-            25 >= self.unit.team.FOOD >= 20 
+            25 >= self.team.FOOD >= 20 
         )
 
 
     def test_deplete(self):
         self.unit.x = 500
         self.unit.y = 200
-        self.food2 = food.Food(food=20, batch=BATCH, x= 500, y=300)
-        GAME_OBJECTS.append(self.food2)
+        food2 = food.Food(food=20, batch=BATCH, x= 500, y=300)
+        TO_ADD.put(food2, block=True)
         ai = '''
 sleep(0.2)
 for e in explored:
@@ -166,8 +177,8 @@ stop_script()
 
         self.unit.x = 250
         self.unit.y = 550
-        self.food3 = food.Food(food=50, batch=BATCH, x= 200, y=500)
-        GAME_OBJECTS.append(self.food3)
+        food3 = food.Food(food=50, batch=BATCH, x= 200, y=500)
+        TO_ADD.put(food3, block=True)
         # time - resources
         # 1    - wr
         # X    - target_resourse 

@@ -1,6 +1,6 @@
 import util
 
-from models.units import create_unit
+from models.units import create_unit, delete_unit
 from models.resources.resource import ResourceTypes
 
 
@@ -29,35 +29,40 @@ class Team:
 
     def __init__(self,  units={'worker':1},
                         batch=None,
-                        # In case objects get updates from
-                        # a central list
-                 # This creates a race condition as the object_list
-                 # is used bu update 
-                        object_list=[],
+                        # max population
+                        population=30,
                 ):
         self.__capacity = {}
         for type_ in ResourceTypes:
             self.__capacity[type_.lower()] = 0
         self.knowledge_base = {}
 
-        self.__members = set()
-        self.batch = batch 
-        self.object_list = object_list
+        self.members = set()
+        self.batch = batch
+
+        self.max_population = population
+        # Check if initial units exceed population
+        if population < sum(units.values()):
+            raise IllegalArgumentException(
+                "The initial 'units' of the team exceed the max population"
+            )
+        # Create the default units
         for k,v in units.items():
             for i in range(v):
                 self.__create(k)
 
 
     def init_script(self, script):
-        for unit in self.__members:
+        for unit in self.members:
             unit.init_script(script)
 
 
     def __len__(self):
-        return len(self.__members)
+        return len(self.members)
+
 
     def empty(self):
-        return 0 == len(self.__members)
+        return 0 == len(self.members)
 
 
     @util.synchronized
@@ -80,25 +85,41 @@ class Team:
         cost = UNIT_COSTS[unit_type]
         for k,v in cost.items():
             self.__capacity[k] -= v
-                     
 
+                     
+    def __init_unit(self, unit):
+        unit.locals_['createWorker']=self.createWorker
+        unit.locals_['WOOD'] = lambda : self.WOOD
+        unit.locals_['FOOD'] = lambda : self.FOOD
+        unit.locals_['IRON'] = lambda : self.IRON
+        unit.locals_['POPULATION']=lambda : len(self)
+
+ 
     @util.synchronized
     def __create(self, type_):
-       unit = create_unit(type_,
-                         batch=self.batch,
-                         team=self,
-                         )
-       self.__members.add(unit)
-       self.object_list.append(unit)
+        unit = create_unit(type_,
+                           batch=self.batch,
+                           team=self,
+                          )
+        self.__init_unit(unit)
+        self.members.add(unit)
+ 
+
+    def reached_population(self):
+        if len(self) >= self.max_population:
+            return True
+        return False
 
 
     def member(self, obj):
-        return obj in self.__members
+        return obj in self.members
 
 
     @util.synchronized
     def createWorker(self):
         if not self.afford('worker'):
+            return False
+        if self.reached_population():
             return False
         self.__pay_unit('worker')
         self.__create('worker')
@@ -106,9 +127,17 @@ class Team:
 
 
     def update(self, td):
-        for unit in self.__members:
-            unit.update(td)
 
+        for unit in self.members:
+            unit.update(td)
+            if unit.dead:
+                delete_unit(unit)
+
+    def delete(self):
+        for obj in self.members:
+            delete_unit(obj)
+        self.members = set()
+        
 
 Gaia = Team()
 

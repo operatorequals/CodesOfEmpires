@@ -38,6 +38,9 @@ class Resource(pyglet.sprite.Sprite, gameobject.GameObject ):
 
 
     def update(self, dt):
+        if self.dead:
+            return 
+
         if not sum(self.__capacity.values()) and self.__destroy_empty:
             self.visible = False
             self.dead = True

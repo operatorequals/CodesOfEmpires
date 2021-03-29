@@ -24,7 +24,6 @@ class Unit(scriptedobject.ScriptedObject, movableobject.MovableObject, gameobjec
         self.visibility_radius = 180
         self.explored_objects = []
 
-        self.locals_['team'] = team # huge security issue 
         self.locals_['last_explored'] = self.last_explored
         self.locals_['explored'] = self.explored_objects
  
@@ -51,13 +50,11 @@ class Unit(scriptedobject.ScriptedObject, movableobject.MovableObject, gameobjec
 
     def update(self, td):
         super().update(td)
-        dead_objects = []
+        to_remove = []
         for gm in self.explored_objects:
             if gm.dead:
-                dead_objects.append(gm)
+                to_remove.append(gm)
 
-        for gm in dead_objects:
+        for gm in to_remove:
             self.explored_objects.remove(gm)
-
-
 
