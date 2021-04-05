@@ -1,5 +1,7 @@
 from models.units import TO_ADD, TO_REMOVE, GAME_OBJECTS, delete_unit
 
+from mechanics.team import TEAMS
+
 
 def update(dt):
 
@@ -13,6 +15,8 @@ def update(dt):
         GAME_OBJECTS.remove(obj)
         TO_REMOVE.task_done()
 
+    for team in TEAMS:
+        team.update(dt)
 
     for i in range(len(GAME_OBJECTS)):
         obj = GAME_OBJECTS[i]

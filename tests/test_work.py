@@ -3,7 +3,7 @@ from random import randint
 
 from models.units import workerunit
 from models.resources import resource, wood, food, iron
-from mechanics import team
+from mechanics.team import createTeam
 
 import tests
 from models.units import TO_ADD, TO_REMOVE
@@ -20,10 +20,12 @@ max_t = x/v
 class Work(tests.GameTest):
 
     def setUp(self):
-        self.team = team.Team(units={'worker':1}, batch=BATCH)
+        super().setUp()
+        self.team = createTeam(units={'worker':1}, batch=BATCH)
         # Hack to retrive the first element of a set:
         # https://stackoverflow.com/a/59841
-        for self.unit in self.team.members: break
+        while not self.team.members: continue
+        self.unit = list(self.team.members)[0]
         self.unit.x = 200
         self.unit.y = 200
 
@@ -35,14 +37,13 @@ class Work(tests.GameTest):
         TO_ADD.put(self.iron, block=False)
         TO_ADD.put(self.food, block=False)
         
-        super().setUp()
 
     def tearDown(self):
+        super().tearDown()
         self.team.delete()
         TO_REMOVE.put(self.wood, block=True)
         TO_REMOVE.put(self.iron, block=True)
         TO_REMOVE.put(self.food, block=True)
-        super().tearDown()
 
 
     def test_timber(self):

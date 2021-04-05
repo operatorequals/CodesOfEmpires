@@ -2,7 +2,7 @@ from time import sleep
 from random import randint
 
 from mechanics.game import BATCH
-from mechanics import team
+from mechanics.team import createTeam
 from models.resources import food
 from resources import load
 
@@ -15,22 +15,24 @@ class Team(tests.GameTest):
 
     def setUp(self):
 
-        self.team = team.Team(units={'worker':1}, batch=BATCH)
-        for self.unit in self.team.members: break
+        super().setUp()
+        self.team = createTeam(units={'worker':1}, batch=BATCH)
+        while not self.team.members: continue
+        self.unit = list(self.team.members)[0]
+        self.unit.x = 0
+        self.unit.y = 0
+
         self.food = food.Food(food=500, batch=BATCH, x=200, y=200)
         TO_ADD.put(self.food, block=True)
-        super().setUp()
 
 
     def tearDown(self):
+        super().tearDown()
         self.team.delete()
         TO_REMOVE.put(self.food, block=True)
-        super().tearDown()
 
 
     def test_add_worker(self):
-        self.unit.x = 0
-        self.unit.y = 0
         ai = f"""
 sleep(0.2)
 move(100,300)
@@ -71,13 +73,14 @@ if a.isFood:
 
     while FOOD() < 20:
         sleep(0.5)
-    stop_work()
-    createWorker()
+    #stop_work()
+    created = createWorker()
 sleep(2)
 stop_script()
         """
         self.team.init_script(ai)
         sleep(3)
+        self.unit.script.join()
         self.assertTrue(
             self.team.FOOD < 20
         )
@@ -88,8 +91,6 @@ stop_script()
 
 
     def test_use_second_worker(self):
-        self.unit.x = 0
-        self.unit.y = 0
         ai = f"""
 move(300,100)
 while not explored:
@@ -102,8 +103,9 @@ if a.isFood and not guard:
 
     while FOOD() < 50:
         sleep(0.1)
-    #stop_work()
-    createWorker()
+    stop_work()
+    created=createWorker()
+    #print(created)
 else:
     sleep(0.1)
     continue
@@ -111,7 +113,7 @@ stop_script()
         """
         self.team.init_script(ai)
         self.unit.script.join()
-
+        sleep(0.2) # Wait for Team's update to add the unit
         self.assertTrue(
             len(self.team) == 2
         )
@@ -132,3 +134,26 @@ stop_script()
             )
 
 
+    def test_up_to_n(self, N=3):
+        ai2= 'move(500,500)'
+        ai = f'''
+sleep(0.8)
+while POPULATION() < {N}:
+    eta=move(200,400)
+    for e in explored:
+        if e.isFood:
+            collect(e)
+            while FOOD() < 50 and POPULATION() < {N}:
+                sleep(0.3)
+            created=createWorker()
+    sleep(0.3)
+stop_script()
+'''
+        self.team.init_script(ai)
+        while len(self.team) < N:
+            sleep(1)
+        sleep(0.2) # Wait for Team's update to add the unit
+#        self.team.init_script('stop_script()')
+#        for unit in team.members:
+#            unit.stop_script()
+        self.assertTrue(len(self.team) >= N)

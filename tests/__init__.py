@@ -10,7 +10,6 @@ from mechanics.game import WINDOW, BATCH, APP
 WINDOW.set_visible(False)
 WINDOW.set_location(1120,200)
 WINDOW.set_visible(True)
-
 TEXT_BATCH = pyglet.graphics.Batch()
 
 @WINDOW.event
@@ -35,7 +34,6 @@ class GameTest(unittest.TestCase):
         GameTest.label_pos[1] -= 15
         self.thr = Thread(target=APP.run, daemon=False)
         self.thr.start()
-#        self.objects = []
 
 
     def tearDown(self):

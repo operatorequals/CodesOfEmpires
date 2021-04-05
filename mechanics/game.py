@@ -13,8 +13,6 @@ WINDOW.set_visible(True)
 BATCH = pyglet.graphics.Batch()
 APP = pyglet.app
 
-TEAMS=[
-]
 
 
 pyglet.clock.schedule_interval(update, 1 / 120.0)

@@ -36,7 +36,6 @@ class Resource(pyglet.sprite.Sprite, gameobject.GameObject ):
             "iron" : iron_gen
         }
 
-
     def update(self, dt):
         if self.dead:
             return 
@@ -50,7 +49,7 @@ class Resource(pyglet.sprite.Sprite, gameobject.GameObject ):
             self.__capacity[r] += self.__generate[r]
 
 
-    @util.synchronized
+    @util.synchronized('resource', func_type='method')
     def _collect(self, value, type):
         if self.__capacity[type] == 0:
             return 0    

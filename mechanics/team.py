@@ -1,14 +1,22 @@
+import threading
+import queue
+
 import util
 
 from models.units import create_unit, delete_unit
 from models.resources.resource import ResourceTypes
 
+TEAMS = []
+
 
 UNIT_COSTS = {
     "worker" : {
-        'food': 50
+        'food': 50,
+#        'time': 5    # seconds
     }
 }
+
+
 
 class Team:
 
@@ -31,10 +39,14 @@ class Team:
                         batch=None,
                         # max population
                         population=30,
+                        # code initialization
                         code=None,
                         definitions='',
                         constants='',
                 ):
+        self.to_add_members    = queue.Queue()
+        self.to_remove_members = queue.Queue()
+
         self.__capacity = {}
         for type_ in ResourceTypes:
             self.__capacity[type_.lower()] = 0
@@ -68,23 +80,19 @@ class Team:
                             )
 
 
-    @util.synchronized
     def __len__(self):
         return len(self.members)
 
 
-    @util.synchronized
     def empty(self):
         return 0 == len(self.members)
 
 
-    @util.synchronized
+    @util.synchronized('resource')
     def _stockpile(self, value, type_):
-#        print(f"Stockpiled {value} - {self.__capacity[type_.lower()]}")
         self.__capacity[type_.lower()] += value
 
 
-    @util.synchronized
     def afford(self, unit_type):
         cost = UNIT_COSTS[unit_type]
         for k,v in cost.items():
@@ -93,7 +101,7 @@ class Team:
         return True
 
 
-    @util.synchronized
+    @util.synchronized('resource')
     def __pay_unit(self,unit_type):
         cost = UNIT_COSTS[unit_type]
         for k,v in cost.items():
@@ -108,15 +116,13 @@ class Team:
         unit.locals_['POPULATION']=lambda : len(self)
 
  
-    @util.synchronized
     def __create(self, type_):
         unit = create_unit(type_,
                            batch=self.batch,
                            team=self,
                          )
         self.__init_unit(unit)
-        self.members.add(unit)
- 
+        self.to_add_members.put(unit) 
         unit.init_script(self.code,
                          self.definitions,
                          self.constants)
@@ -132,7 +138,6 @@ class Team:
         return obj in self.members
 
 
-    @util.synchronized
     def createWorker(self):
         if not self.afford('worker'):
             return False
@@ -143,20 +148,38 @@ class Team:
         return True
 
 
-    def update(self, td):
+    def update(self, dt):
 
+        while not self.to_add_members.empty():
+            unit = self.to_add_members.get()
+            self.members.add(unit)
+
+        while not self.to_remove_members.empty():
+            unit = self.to_remove_members.get()
+            assert unit in self.members
+            self.members.remove(unit)
+        '''
         for unit in self.members:
             unit.update(td)
             if unit.dead:
                 delete_unit(unit)
+        '''
+
+
+    def delete_member(self, unit):
+        self.to_remove_members.put(unit) 
 
 
     def delete(self):
         for obj in self.members:
             delete_unit(obj)
-        self.members = set()
+            self.delete_member(obj)
         
 
 Gaia = Team()
 
+def createTeam(*args, **kwargs):
+    t = Team(*args, **kwargs)
+    TEAMS.append(t)
+    return t
 
