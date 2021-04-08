@@ -172,8 +172,12 @@ class Team:
 
     def delete(self):
         for obj in self.members:
-            delete_unit(obj)
             self.delete_member(obj)
+            # If the object is dead, it is going to be
+            # removed from the gameloop
+            if obj.dead:
+                continue
+            delete_unit(obj)
         
 
 
