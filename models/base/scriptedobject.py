@@ -42,7 +42,10 @@ def linter(code, definitions='', constants=''):
     for i in code.splitlines():
         indented_code += '    ' + i + '\n'
     # Change all while statements to check for deadness
-    indented_code = indented_code.replace("while ","while not stop_event.is_set() and ")
+    indented_code = indented_code.replace(
+        "while ",
+        "while not stop_event.is_set() and "
+    )
     payload = f'''
 {constants}
 {definitions}

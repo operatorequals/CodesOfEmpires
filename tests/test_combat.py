@@ -19,8 +19,8 @@ class Combat(tests.GameTest):
         self.team = createTeam(units={'worker':1}, batch=BATCH)
         while not self.team.members: continue
         self.unit = list(self.team.members)[0]
-        self.unit.x = 500
-        self.unit.y = 500
+#        self.unit.x = 500
+#        self.unit.y = 500
 
 
     def tearDown(self):
