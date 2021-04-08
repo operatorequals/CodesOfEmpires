@@ -176,10 +176,10 @@ class Team:
             self.delete_member(obj)
         
 
-Gaia = Team()
 
 def createTeam(*args, **kwargs):
     t = Team(*args, **kwargs)
     TEAMS.append(t)
     return t
+
 
