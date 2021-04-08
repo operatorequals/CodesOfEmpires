@@ -22,6 +22,22 @@ worker.width  = 42
 worker.height = 42
 center_image(worker)
 
+archer=pyglet.resource.image("archer.png")
+archer.width  = 42
+archer.height = 42
+center_image(archer)
+
+infantry=pyglet.resource.image("infantry.png")
+infantry.width  = 42
+infantry.height = 42
+center_image(infantry)
+
+cavalry=pyglet.resource.image("cavalry.png")
+cavalry.width  = 42
+cavalry.height = 42
+center_image(cavalry)
+
+
 
 wood=pyglet.resource.image("wood.png")
 wood.width  = 32
