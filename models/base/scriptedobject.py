@@ -14,6 +14,12 @@ while not stop_event.is_set():
     pass
 """
 
+function_preamble = """
+def 
+
+"""
+
+
 escape_words = [
     "setattr", "getattr",
     "import",
@@ -35,6 +41,8 @@ def linter(code, definitions='', constants=''):
     indented_code = ''
     for i in code.splitlines():
         indented_code += '    ' + i + '\n'
+    # Change all while statements to check for deadness
+    indented_code = indented_code.replace("while ","while not stop_event.is_set() and ")
     payload = f'''
 {constants}
 {definitions}

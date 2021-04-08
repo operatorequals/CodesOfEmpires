@@ -68,3 +68,17 @@ sleep(1)
         )
 
 
+    def test_dead_stuck_in_loop(self):
+        ai = """
+while True:
+    sleep(1)
+"""
+        self.team.init_script(ai)
+        self.unit.apply_damage(self.unit.hp)
+        self.unit.script.join()
+
+        self.assertTrue(
+            self.unit.dead
+        )
+
+
