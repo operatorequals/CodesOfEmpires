@@ -1,0 +1,7 @@
+asttokens==2.0.4
+colorama==0.4.4
+executing==0.5.4
+icecream==2.1.0
+pyglet==1.5.15
+Pygments==2.8.1
+six==1.15.0
